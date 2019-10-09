@@ -1,0 +1,56 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  background-color: #ffc6c4;
+}
+
+li {
+  padding-top: 3px;
+}
+
+ul {
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: white;
+  font-family: 'Abril Fatface', serif;
+}
+
+.title {
+  color: white;
+  text-align: center;
+  font-family: 'Abril Fatface', serif;
+  font-size: 60px;
+}
+
+.logged {
+  color: white;
+  text-align: center;
+}
+
+.blog-list {
+  padding-bottom: 5px;
+  font-size: 15px;
+  list-style: none;
+}
+
+.blog-container {
+  padding-left: 40px;
+}
+
+.error {
+  color: #bd7674;
+  background: white;
+  text-align: center;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
