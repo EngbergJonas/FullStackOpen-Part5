@@ -1,7 +1,6 @@
 import axios from 'axios'
 const baseUrl = '/api/blogs'
 
-// eslint-disable-next-line
 let token = null
 
 const setToken = newToken => {
@@ -13,4 +12,12 @@ const getAll = () => {
   return req.then(res => res.data)
 }
 
-export default { getAll, setToken }
+const create = async newObject => {
+  const config = {
+    headers: { Authorization: token }
+  }
+  const res = await axios.post(baseUrl, newObject, config)
+  return res.data
+}
+
+export default { getAll, setToken, create }

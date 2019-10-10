@@ -3,11 +3,14 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [newTitle, setNewTitle] = useState('')
+  const [newUrl, setNewUrl] = useState('')
+  const [message, setMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -41,9 +44,9 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setMessage('Wrong credentials')
       setTimeout(() => {
-        setErrorMessage(null)
+        setMessage(null)
       }, 5000)
     }
   }
@@ -53,12 +56,12 @@ const App = () => {
     try {
       window.localStorage.removeItem('loggedBlogAppUser')
     } catch (exception) {
-      setErrorMessage('Already logged out.')
+      setMessage('Already logged out.')
       setTimeout(() => {
-        setErrorMessage(null)
+        setMessage(null)
       }, 5000)
     } finally {
-      window.location.reload()
+      setUser(null)
     }
   }
 
@@ -66,13 +69,39 @@ const App = () => {
 
   const rows = () => blogsToShow.map(blog => <Blog key={blog.id} blog={blog} />)
 
+  const handleTitleChange = event => {
+    setNewTitle(event.target.value)
+  }
+
+  const handleUrlChange = event => {
+    setNewUrl(event.target.value)
+  }
+
+  const addBlog = event => {
+    event.preventDefault()
+    const blogObject = {
+      title: newTitle,
+      author: user.name,
+      url: newUrl,
+      likes: 0,
+      userId: user.id
+    }
+
+    blogService.create(blogObject).then(data => {
+      setBlogs(blogs.concat(data))
+    })
+    setMessage(`A new Blog, ${newTitle}, was created!`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
+  }
+
   return (
     <div className='App'>
       <div>
         <h1 className='title'>Blog List</h1>
       </div>
-      <Notification message={errorMessage} />
-
+      <Notification message={message} />
       {user === null ? (
         <LoginForm
           user={user}
@@ -85,7 +114,20 @@ const App = () => {
         />
       ) : (
         <div className='blog-container'>
+          <div>
+            <p className='logged'>
+              Welcome, {user.name}.{' '}
+              <button onClick={handleLogout}>Logout</button>
+            </p>
+          </div>
           <h2>Blogs</h2>
+          <BlogForm
+            addBlog={addBlog}
+            newTitle={newTitle}
+            handleTitleChange={handleTitleChange}
+            newUrl={newUrl}
+            handleUrlChange={handleUrlChange}
+          />
           <ul>{rows()}</ul>
         </div>
       )}
