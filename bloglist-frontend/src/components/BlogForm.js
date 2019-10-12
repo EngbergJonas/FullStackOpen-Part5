@@ -10,10 +10,10 @@ const BlogForm = ({
   return (
     <form onSubmit={addBlog}>
       <p>
-        <input value={newTitle} onChange={handleTitleChange} />
+        Title: <input value={newTitle} onChange={handleTitleChange} />
       </p>
       <p>
-        <input value={newUrl} onChange={handleUrlChange} />
+        Url: <input value={newUrl} onChange={handleUrlChange} />
       </p>
       <button type='submit'>Post</button>
     </form>
