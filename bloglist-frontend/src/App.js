@@ -17,7 +17,7 @@ const App = () => {
 	const [ user, setUser ] = useState(null)
 
 	useEffect(() => {
-		blogService.getAll().then((initialBlogs) => setBlogs(initialBlogs))
+		blogService.getAll().then(initialBlogs => setBlogs(initialBlogs))
 	}, [])
 
 	useEffect(() => {
@@ -31,7 +31,7 @@ const App = () => {
 
 	const blogFromRef = React.createRef()
 
-	const handleLogin = async (event) => {
+	const handleLogin = async event => {
 		event.preventDefault()
 		try {
 			const user = await loginService.login({
@@ -54,7 +54,7 @@ const App = () => {
 		}
 	}
 
-	const handleLogout = async (event) => {
+	const handleLogout = async event => {
 		event.preventDefault()
 		try {
 			window.localStorage.removeItem('loggedBlogAppUser')
@@ -68,15 +68,15 @@ const App = () => {
 		}
 	}
 
-	const handleTitleChange = (event) => {
+	const handleTitleChange = event => {
 		setNewTitle(event.target.value)
 	}
 
-	const handleUrlChange = (event) => {
+	const handleUrlChange = event => {
 		setNewUrl(event.target.value)
 	}
 
-	const addBlog = (event) => {
+	const addBlog = event => {
 		event.preventDefault()
 		blogFromRef.current.toggleVisibility()
 
@@ -88,7 +88,7 @@ const App = () => {
 			userId: user.id
 		}
 
-		blogService.create(blogObject).then((data) => {
+		blogService.create(blogObject).then(data => {
 			setBlogs(blogs.concat(data))
 			setNewTitle('')
 			setNewUrl('')
@@ -100,9 +100,9 @@ const App = () => {
 		}, 5000)
 	}
 
-	const blogsToShow = blogs.filter((blog) => blog)
+	const blogsToShow = blogs.filter(blog => blog)
 
-	const rows = () => blogsToShow.map((blog) => <Blog key={blog.id} blog={blog} />)
+	const rows = () => blogsToShow.map(blog => <Blog key={blog.id} blog={blog} />)
 
 	const loginForm = () => (
 		<Togglable buttonLabel='Login'>
