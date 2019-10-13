@@ -59,13 +59,12 @@ const App = () => {
 		event.preventDefault()
 		try {
 			window.localStorage.removeItem('loggedBlogAppUser')
+			setUser(null)
 		} catch (exception) {
 			setMessage('Already logged out.')
 			setTimeout(() => {
 				setMessage(null)
 			}, 5000)
-		} finally {
-			setUser(null)
 		}
 	}
 
@@ -89,8 +88,7 @@ const App = () => {
 			title: newTitle,
 			author: newAuthor,
 			url: newUrl,
-			likes: 0,
-			userId: user.id
+			likes: 0
 		}
 
 		blogService
@@ -134,9 +132,8 @@ const App = () => {
 
 	const deleteBlog = id => {
 		const blog = blogs.find(b => b.id === id)
-		console.log(blog)
 
-		if (window.confirm(`Are you sure you want to delete, ${blog.name}?`)) {
+		if (window.confirm(`Are you sure you want to delete, ${blog.title}?`)) {
 			blogService
 				.remove(blog.id)
 				.then(() => {
@@ -144,8 +141,8 @@ const App = () => {
 						setBlogs(blogs)
 					})
 				})
-				.catch(() => {
-					setMessage(`Blog ${blog.title} was already removed from the server.`)
+				.catch(error => {
+					setMessage(`${error.res.data.error}`)
 					setTimeout(() => {
 						setMessage(null)
 					}, 5000)
@@ -186,27 +183,32 @@ const App = () => {
 		blogs
 			.sort((a, b) => b.likes - a.likes)
 			.map(blog => (
-				<Blog key={blog.id} blog={blog} deleteBlog={() => deleteBlog(blog.id)} likeBlog={() => likeBlog(blog.id)} />
+				<Blog
+					key={blog.id}
+					blog={blog}
+					user={user !== null ? user : 'null'}
+					deleteBlog={() => deleteBlog(blog.id)}
+					likeBlog={() => likeBlog(blog.id)}
+				/>
 			))
 
 	return (
-		<div>
+		<div className='content'>
 			<h1 className='title'>Blog List</h1>
 			<Notification message={message} />
 			{user === null ? (
 				loginForm()
 			) : (
-				<div className='content'>
+				<div>
 					<p className='logged'>
 						Welcome, {user.name}.<button onClick={handleLogout}>Logout</button>
 					</p>
 					{blogForm()}
 				</div>
 			)}
-			<div className='content'>
-				<h2>Blogs</h2>
-				<ul>{rows()}</ul>
-			</div>
+
+			<h2>Blogs</h2>
+			<ul>{rows()}</ul>
 		</div>
 	)
 }
