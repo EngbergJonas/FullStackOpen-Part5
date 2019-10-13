@@ -80,7 +80,7 @@ const App = () => {
 		setNewAuthor(event.target.value)
 	}
 
-	const addBlog = event => {
+	const addBlog = async event => {
 		event.preventDefault()
 		blogFromRef.current.toggleVisibility()
 
@@ -91,25 +91,27 @@ const App = () => {
 			likes: 0
 		}
 
-		blogService
-			.create(blogObject)
-			.then(data => {
-				setBlogs(blogs.concat(data))
-				setNewTitle('')
-				setNewUrl('')
-				setNewAuthor('')
-			})
-			.catch(() => {
-				setMessage(`Fill in the required fields!`)
-				setTimeout(() => {
-					setMessage(null)
-				}, 5000)
-			})
+		try {
+			const addedBlog = await blogService.create(blogObject)
+			setBlogs(blogs.concat(addedBlog))
 
-		setMessage(`A new Blog, ${newTitle}, was created!`)
-		setTimeout(() => {
-			setMessage(null)
-		}, 5000)
+			//This is necessary to update the publisher of the blog
+			const updatedBlogs = await blogService.getAll()
+			setBlogs(updatedBlogs)
+
+			setMessage(`${user.name} added ${addedBlog.author}.`)
+			setTimeout(() => {
+				setMessage(null)
+			}, 5000)
+			setNewTitle('')
+			setNewUrl('')
+			setNewAuthor('')
+		} catch (error) {
+			setMessage(error.response.data.error)
+			setTimeout(() => {
+				setMessage(null)
+			}, 5000)
+		}
 	}
 
 	const likeBlog = id => {
