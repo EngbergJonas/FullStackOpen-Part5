@@ -11,6 +11,7 @@ const App = () => {
 	const [ blogs, setBlogs ] = useState([])
 	const [ newTitle, setNewTitle ] = useState('')
 	const [ newUrl, setNewUrl ] = useState('')
+	const [ newAuthor, setNewAuthor ] = useState('')
 	const [ message, setMessage ] = useState(null)
 	const [ username, setUsername ] = useState('')
 	const [ password, setPassword ] = useState('')
@@ -76,13 +77,17 @@ const App = () => {
 		setNewUrl(event.target.value)
 	}
 
+	const handleAuthorChange = event => {
+		setNewAuthor(event.target.value)
+	}
+
 	const addBlog = event => {
 		event.preventDefault()
 		blogFromRef.current.toggleVisibility()
 
 		const blogObject = {
 			title: newTitle,
-			author: user.name,
+			author: newAuthor,
 			url: newUrl,
 			likes: 0,
 			userId: user.id
@@ -92,6 +97,7 @@ const App = () => {
 			setBlogs(blogs.concat(data))
 			setNewTitle('')
 			setNewUrl('')
+			setNewAuthor('')
 		})
 
 		setMessage(`A new Blog, ${newTitle}, was created!`)
@@ -126,6 +132,8 @@ const App = () => {
 				handleTitleChange={handleTitleChange}
 				newUrl={newUrl}
 				handleUrlChange={handleUrlChange}
+				handleAuthorChange={handleAuthorChange}
+				newAuthor={newAuthor}
 			/>
 		</Togglable>
 	)
@@ -137,14 +145,14 @@ const App = () => {
 			{user === null ? (
 				loginForm()
 			) : (
-				<div className='blog-container'>
+				<div className='content'>
 					<p className='logged'>
 						Welcome, {user.name}.<button onClick={handleLogout}>Logout</button>
 					</p>
 					{blogForm()}
 				</div>
 			)}
-			<div className='blog-container'>
+			<div className='content'>
 				<h2>Blogs</h2>
 				<ul>{rows()}</ul>
 			</div>
