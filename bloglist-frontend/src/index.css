@@ -38,6 +38,9 @@ h6 {
 	padding-bottom: 5px;
 	font-size: 15px;
 	list-style: none;
+}
+
+.clickable {
 	cursor: pointer;
 }
 

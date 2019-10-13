@@ -106,9 +106,27 @@ const App = () => {
 		}, 5000)
 	}
 
-	const blogsToShow = blogs.filter(blog => blog)
+	const likeBlog = id => {
+		const blog = blogs.find(b => b.id === id)
+		const changedBlog = { ...blog, likes: blog.likes + 1 }
 
-	const rows = () => blogsToShow.map(blog => <Blog key={blog.id} blog={blog} />)
+		blogService
+			.update(id, changedBlog)
+			.then(returnedBlog => {
+				setBlogs(blogs.map(blog => (blog.id !== id ? blog : returnedBlog)))
+			})
+			.catch(error => {
+				setMessage(`Blog ${blog.title} was already removed from the server.`)
+				setTimeout(() => {
+					setMessage(null)
+				}, 5000)
+				setBlogs(blogs.filter(b => b.id !== id))
+			})
+	}
+
+	const allBlogs = blogs.filter(blog => blog)
+
+	const rows = () => allBlogs.map(blog => <Blog key={blog.id} blog={blog} likeBlog={() => likeBlog(blog.id)} />)
 
 	const loginForm = () => (
 		<Togglable buttonLabel='Login'>
