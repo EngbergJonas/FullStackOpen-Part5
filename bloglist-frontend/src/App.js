@@ -93,12 +93,20 @@ const App = () => {
 			userId: user.id
 		}
 
-		blogService.create(blogObject).then(data => {
-			setBlogs(blogs.concat(data))
-			setNewTitle('')
-			setNewUrl('')
-			setNewAuthor('')
-		})
+		blogService
+			.create(blogObject)
+			.then(data => {
+				setBlogs(blogs.concat(data))
+				setNewTitle('')
+				setNewUrl('')
+				setNewAuthor('')
+			})
+			.catch(() => {
+				setMessage(`Fill in the required fields!`)
+				setTimeout(() => {
+					setMessage(null)
+				}, 5000)
+			})
 
 		setMessage(`A new Blog, ${newTitle}, was created!`)
 		setTimeout(() => {
@@ -116,7 +124,7 @@ const App = () => {
 				setBlogs(blogs.map(blog => (blog.id !== id ? blog : returnedBlog)))
 			})
 			.catch(error => {
-				setMessage(`Blog ${blog.title} was already removed from the server.`)
+				setMessage(`${error.res.data.error}`)
 				setTimeout(() => {
 					setMessage(null)
 				}, 5000)
@@ -124,9 +132,27 @@ const App = () => {
 			})
 	}
 
-	const allBlogs = blogs.filter(blog => blog)
+	const deleteBlog = id => {
+		const blog = blogs.find(b => b.id === id)
+		console.log(blog)
 
-	const rows = () => allBlogs.map(blog => <Blog key={blog.id} blog={blog} likeBlog={() => likeBlog(blog.id)} />)
+		if (window.confirm(`Are you sure you want to delete, ${blog.name}?`)) {
+			blogService
+				.remove(blog.id)
+				.then(() => {
+					blogService.getAll().then(blogs => {
+						setBlogs(blogs)
+					})
+				})
+				.catch(() => {
+					setMessage(`Blog ${blog.title} was already removed from the server.`)
+					setTimeout(() => {
+						setMessage(null)
+					}, 5000)
+					setBlogs(blogs.filter(b => b.id !== id))
+				})
+		}
+	}
 
 	const loginForm = () => (
 		<Togglable buttonLabel='Login'>
@@ -155,6 +181,13 @@ const App = () => {
 			/>
 		</Togglable>
 	)
+
+	const rows = () =>
+		blogs
+			.sort((a, b) => b.likes - a.likes)
+			.map(blog => (
+				<Blog key={blog.id} blog={blog} deleteBlog={() => deleteBlog(blog.id)} likeBlog={() => likeBlog(blog.id)} />
+			))
 
 	return (
 		<div>
