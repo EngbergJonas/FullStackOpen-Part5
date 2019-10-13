@@ -94,11 +94,6 @@ const App = () => {
 		try {
 			const addedBlog = await blogService.create(blogObject)
 			setBlogs(blogs.concat(addedBlog))
-
-			//This is necessary to update the publisher of the blog
-			const updatedBlogs = await blogService.getAll()
-			setBlogs(updatedBlogs)
-
 			setMessage(`${user.name} added ${addedBlog.author}.`)
 			setTimeout(() => {
 				setMessage(null)
